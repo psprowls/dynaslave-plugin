@@ -15,7 +15,7 @@ fi
 BUILDS_HOME=${jenkins_root_directory}
 BUILDS_URL=http://${auth_string}${jenkins_master_ip}
 # Change the HOST prefix from ds- if you set it to something different in the Jenkins system config.
-HOST=${jenkins_slave_name}
+HOST=${jenkins_slave_prefix}-${jenkins_slave_name}
 LOG=${BUILDS_HOME}/log
 SLAVE_TOOLS=${BUILDS_HOME}/scripts
 SLAVE_JAR=${BUILDS_URL}/jnlpJars/slave.jar

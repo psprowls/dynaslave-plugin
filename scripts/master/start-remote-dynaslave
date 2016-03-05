@@ -1,5 +1,7 @@
 #!/bin/bash
 
+source /etc/environment
+
 set -x
 
 if [ $# -ne 2 ]
@@ -12,10 +14,10 @@ fi
 slave_node=$1
 remote_user=$2
 
-master_node="jenkins.hostname.com"
-keyfile="/home/jenkins/.ssh/id_rsa"
+master_node=""
+keyfile="/var/lib/jenkins/.ssh/id_rsa"
 
-remote_builds_dir=/apps/jenkins
+remote_builds_dir=/home/jenkins
 
 # TODO this isn't really needed since start-remote-dynaslave does a pkill as well
 echo "killing old slave processes"
@@ -27,8 +29,8 @@ then
     ssh -l ${remote_user} -i ${keyfile} ${slave_node} "chmod 755 \$HOME"
     rsync -au -c -v --delete \
         -e "ssh -l ${remote_user} -i ${keyfile}" \
-        /apps/jenkins/tools ${remote_user}@${slave_node}:${remote_builds_dir}/
+        /var/lib/jenkins/scripts ${remote_user}@${slave_node}:${remote_builds_dir}/
 fi
 
 echo "launching remote slave process"
-ssh -l ${remote_user} -i ${keyfile} ${slave_node} ${remote_builds_dir}/tools/start-dynaslave
+ssh -l ${remote_user} -i ${keyfile} ${slave_node} ${remote_builds_dir}/scripts/master/start-dynaslave

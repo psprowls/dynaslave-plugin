@@ -1,24 +1,27 @@
 #!/bin/bash
 
+source /etc/environment
 set -x
 
-BUILDS_HOME=/apps/jenkins
-BUILDS_URL=http://jenkins.hostname.com
+# optional login for jenkins account
+if [ -n "${jenkins_slave_auth_username}" ] && [ -n "${jenkins_slave_auth_password}" ]; then
+  auth_string="$jenkins_slave_auth_username:$jenkins_slave_auth_password@"
+  JNLP_AUTH=" -jnlpCredentials $jenkins_slave_auth_username:$jenkins_slave_auth_password"
+else
+  auth_string=""
+  JNLP_AUTH=""
+fi
+
+BUILDS_HOME=${jenkins_root_directory}
+BUILDS_URL=http://${auth_string}${jenkins_master_ip}
 # Change the HOST prefix from ds- if you set it to something different in the Jenkins system config.
-HOST=ds-$(hostname)
-SLAVE_DIR=${BUILDS_HOME}/slave
-SLAVE_TOOLS=${BUILDS_HOME}/tools
+HOST=${jenkins_slave_name}
+LOG=${BUILDS_HOME}/log
+SLAVE_TOOLS=${BUILDS_HOME}/scripts
 SLAVE_JAR=${BUILDS_URL}/jnlpJars/slave.jar
 JNLP_URL="${BUILDS_URL}/computer/${HOST}/slave-agent.jnlp"
 
-setup_java() { 
-    JAVA_HOME=${SLAVE_TOOLS}/jdk1.6.0_31
-    export JAVA_HOME
-    echo "Using ${JAVA_HOME} as JAVA_HOME"
-
-    PATH=${JAVA_HOME}/bin:${PATH}
-    java -version
-}
+# java must be installed already
 
 refresh_slave_jar() {
     pushd ${SLAVE_TOOLS}
@@ -28,15 +31,14 @@ refresh_slave_jar() {
 
 launch_slave() {
     pkill -f slave.jar
-    rotate_logs
-    ${JAVA_HOME}/bin/java -jar ${SLAVE_TOOLS}/slave.jar \
-      -jnlpUrl ${JNLP_URL} > ${LOG} 2>&1 &
+    nohup java -jar ${SLAVE_TOOLS}/slave.jar \
+      -jnlpUrl ${JNLP_URL} ${JNLP_AUTH} > ${LOG} 2>&1 &
     echo Slave started as process $$
 }
 
 main() {
     [[ -d ${BUILDS_HOME}/slave ]] && mkdir -p ${BUILDS_HOME}/slave
-    setup_java
+    refresh_slave_jar
     launch_slave
 }
 

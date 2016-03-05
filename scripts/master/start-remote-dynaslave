@@ -33,4 +33,4 @@ then
 fi
 
 echo "launching remote slave process"
-ssh -l ${remote_user} -i ${keyfile} ${slave_node} ${remote_builds_dir}/scripts/master/start-dynaslave
+ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -l ${remote_user} -i ${keyfile} ${slave_node} ${remote_builds_dir}/scripts/master/start-dynaslave

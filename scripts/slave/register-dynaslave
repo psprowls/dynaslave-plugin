@@ -1,27 +1,49 @@
 #!/bin/bash
 
-Log() {
-    /usr/bin/logger -t "$prog[$$]"  -p user.notice "$*"
-}
+source /etc/environment
+# unique name for this node
+instance_id=`curl -s http://169.254.169.254/latest/meta-data/instance-id`
 
-buildhost="http://jenkins.hostname.com"
-create_slave="${buildhost}/plugin/dynaslave/createSlave?executors=4&remoteFsRoot=/apps/jenkins/slave"
-labels="labels=StandardSlave"
-# Change the hostname prefix from ds- if you set it to something different in the Jenkins system config.
-hostname=ds-$(hostname)
+# appended to prefix 
+NAME="test_feature_branch_$instance_id"
 
-curl -f --silent ${buildhost}/computer/${hostname}
+# save the name into our environment for later use
+sudo echo "jenkins_slave_name=$NAME" >> /etc/environment
+
+
+# default 1 executor 
+jenkins_slave_executors=${jenkins_slave_executors:-1}
+jenkins_root_directory=${jenkins_root_directory:-/var/lib/jenkins}
+jenkins_slave_description=${jenkins_slave_description:-description}
+jenkins_slave_labels=${jenkins_slave_labels:-label}
+jenkins_master_ip=${jenkins_master_ip:-127.0.0.1}
+
+# this is specific for aws, grabbing the private network interface (second in the list)
+hostname=`ifconfig | awk '/inet addr/{print substr($2,6)}' | tail -n2 | head -n1`
+
+# optional login for jenkins account
+if [ -n "${jenkins_slave_auth_username}" ] && [ -n "${jenkins_slave_auth_password}" ]; then
+  auth_string="$jenkins_slave_auth_username:$jenkins_slave_auth_password@"
+else
+  auth_string=""
+fi
+
+build_host="http://${auth_string}${jenkins_master_ip}"
+
+registration_full_url="$build_host/plugin/dynaslave/createSlave?name=$jenkins_slave_name&executors=$jenkins_slave_executors&remoteFsRoot=$jenkins_root_directory&description=$jenkins_slave_description&labels=$jenkins_slave_labels&hostname=$hostname"
+
+echo $registration_full_url
+curl -f --silent ${buildhost}/computer/${jenkins_slave_name}
 ret=$?
 if [ ${ret} -ne 0 ]
 then
-    Log "Jenkins registration lost, re-registering"
-    curl -f --silent "${create_slave}&name=${hostname#dynaslave-}&hostname=${address}&${labels}"
-    curl -f --silent ${buildhost}/computer/${hostname}
+    echo "Jenkins registration lost, re-registering"
+    curl -f --silent ${registration_full_url}
     ret=$?
     if [ ${ret} -eq 0 ]
     then
-        Log "Registration with Jenkins successful"
+        echo "Registration with Jenkins successful"
     else
-        Log "Registration with jenkins FAILED"
+        echo "Registration with jenkins FAILED"
     fi
 fi

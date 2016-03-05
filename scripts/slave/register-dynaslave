@@ -1,6 +1,5 @@
 #!/bin/bash
 
-source /etc/environment
 # unique name for this node
 instance_id=`curl -s http://169.254.169.254/latest/meta-data/instance-id`
 
@@ -10,6 +9,7 @@ NAME="test_feature_branch_$instance_id"
 # save the name into our environment for later use
 sudo echo "jenkins_slave_name=$NAME" >> /etc/environment
 
+source /etc/environment
 
 # default 1 executor 
 jenkins_slave_executors=${jenkins_slave_executors:-1}

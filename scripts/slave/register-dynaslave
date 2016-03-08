@@ -1,14 +1,5 @@
 #!/bin/bash
 
-# unique name for this node
-instance_id=`curl -s http://169.254.169.254/latest/meta-data/instance-id`
-
-# appended to prefix 
-NAME="test_feature_branch_$instance_id"
-
-# save the name into our environment for later use
-echo "jenkins_slave_name='$NAME'" >> /etc/environment
-
 source /etc/environment
 
 # default 1 executor 

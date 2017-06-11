@@ -3,11 +3,14 @@
 source /etc/environment
 
 # default 1 executor 
-jenkins_slave_executors=${jenkins_slave_executors:-1}
-jenkins_root_directory=${jenkins_root_directory:-/var/lib/jenkins}
-jenkins_slave_description=${jenkins_slave_description:-description}
-jenkins_slave_labels=${jenkins_slave_labels:-label}
-jenkins_master_ip=${jenkins_master_ip:-127.0.0.1}
+jenkins_slave_executors=${jenkins_slave_executors:-2}
+jenkins_root_directory=${jenkins_root_directory:-/users/ubuntu/jenkins_data}
+jenkins_slave_description=${jenkins_slave_description:-echo-win-build}
+jenkins_slave_labels=${jenkins_slave_labels:-echo-build}
+jenkins_master_ip=${jenkins_master_ip:-echo-jenkins.test.logicnow.us:8080}
+jenkins_slave_name="echo-win-build"
+jenkins_slave_auth_username="pct-build"
+# jenkins_slave_auth_password=${jenkins_slave_auth_password}
 
 # this is specific for aws, grabbing the private network interface (second in the list)
 hostname=`ifconfig | awk '/inet addr/{print substr($2,6)}' | tail -n2 | head -n1`

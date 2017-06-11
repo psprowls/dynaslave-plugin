@@ -2,7 +2,7 @@
 
 jenkins_slave_auth_username="pct-build"
 jenkins_slave_auth_password=$1
-jenkins_root_directory="/c/jenkins-slave"
+jenkins_root_directory="/c/jenkins"
 jenkins_slave_prefix="dynaslave"
 jenkins_master_ip=10.21.0.11:8080
 jenkins_slave_name="echo-win-build"
@@ -26,6 +26,7 @@ SLAVE_TOOLS=${BUILDS_HOME}/scripts
 SLAVE_JAR=${BUILDS_URL}/jnlpJars/slave.jar
 JNLP_URL="${BUILDS_URL}/computer/${HOST}/slave-agent.jnlp"
 
+echo SLAVE_TOOLS=${SLAVE_TOOLS}
 # java must be installed already
 
 refresh_slave_jar() {
@@ -35,7 +36,6 @@ refresh_slave_jar() {
 }
 
 launch_slave() {
-    pkill -f slave.jar
     nohup java -jar ${SLAVE_TOOLS}/slave.jar \
       -jnlpUrl ${JNLP_URL} ${JNLP_AUTH} > ${LOG} 2>&1 &
     echo Slave started as process $$

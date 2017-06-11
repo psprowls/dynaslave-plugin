@@ -8,7 +8,7 @@ import hudson.slaves.ComputerLauncher;
 import hudson.slaves.NodeProperty;
 import hudson.slaves.RetentionStrategy;
 import org.kohsuke.stapler.DataBoundConstructor;
-
+import hudson.slaves.JNLPLauncher;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
@@ -26,8 +26,8 @@ public class DynaSlave extends Slave {
                      String idleTerminationMinutes)
             throws IOException, FormException {
         super(name, nodeDescription, remoteFS, numExecutors, Mode.NORMAL, labels,
-                new DynaSlaveCommandLauncher(defaultBaseLauncherCommand + " " + hostname + " " + defaultRemoteUser),
-                new DynaSlaveRetentionStrategy(idleTerminationMinutes), Collections.<NodeProperty<?>>emptyList());
+                new JNLPLauncher(),
+                RetentionStrategy.Always.INSTANCE, Collections.<NodeProperty<?>>emptyList());
     }
 
     @DataBoundConstructor

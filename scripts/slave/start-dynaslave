@@ -5,7 +5,7 @@ jenkins_slave_auth_password=$1
 jenkins_root_directory="/c/jenkins"
 jenkins_master_ip="echo-jenkins.test.logicnow.us:8080"
 jenkins_slave_name="echo-win-build"
-jenkins_slave_prefix="dynaslave"
+jenkins_slave_prefix="ds"
 
 # optional login for jenkins account
 if [ -n "${jenkins_slave_auth_username}" ] && [ -n "${jenkins_slave_auth_password}" ]; then

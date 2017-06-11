@@ -8,7 +8,7 @@ jenkins_slave_labels=${jenkins_slave_labels:-echo-build}
 jenkins_master_ip=${jenkins_master_ip:-echo-jenkins.test.logicnow.us:8080}
 jenkins_slave_name="echo-win-build"
 jenkins_slave_auth_username="pct-build"
-# jenkins_slave_auth_password=${jenkins_slave_auth_password}
+jenkins_slave_auth_password=$1
 
 # this is specific for aws, grabbing the private network interface (second in the list)
 hostname="echo-win-build"

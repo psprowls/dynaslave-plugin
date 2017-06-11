@@ -1,7 +1,12 @@
 #!/bin/bash
 
-source /etc/environment
-set -x
+jenkins_slave_auth_username="pct-build"
+jenkins_slave_auth_password=$1
+jenkins_root_directory="C:\\jenkins-slave\\"
+jenkins_slave_prefix="dynaslave"
+jenkins_master_ip=10.21.0.11:8080
+jenkins_slave_name="echo-win-build"
+jenkins_slave_prefix="dynaslave"
 
 # optional login for jenkins account
 if [ -n "${jenkins_slave_auth_username}" ] && [ -n "${jenkins_slave_auth_password}" ]; then
